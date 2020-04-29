@@ -1,6 +1,7 @@
 from django.contrib import admin
 # 记得引入include
 from django.urls import path, include
+from django.conf.urls import url
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -29,5 +30,6 @@ urlpatterns = [
     path('notice/', include('notice.urls', namespace='notice')),
     # django-allauth
     path('accounts/', include('allauth.urls')),
+    url(r'^ckeditor/', include('ckeditor_uploader.urls')),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

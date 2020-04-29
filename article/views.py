@@ -258,6 +258,8 @@ def article_update(request, id):
         # 文章栏目
         columns = ArticleColumn.objects.all()
         # 赋值上下文，将 article 文章对象也传递进去，以便提取旧的内容
+        ini = {'body': article.body}
+        article_post_form = ArticlePostForm(initial=ini)
         context = { 
             'article': article, 
             'article_post_form': article_post_form,
