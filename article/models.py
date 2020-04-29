@@ -5,8 +5,6 @@ from django.contrib.auth.models import User
 # timezone 用于处理时间相关事务。
 from django.utils import timezone
 from django.urls import reverse
-from ckeditor.fields import RichTextField
-from ckeditor_uploader.fields import RichTextUploadingField
 
 # Django-taggit
 from taggit.managers import TaggableManager
@@ -62,7 +60,7 @@ class ArticlePost(models.Model):
 
     # 文章正文。
     # 保存大量文本使用 TextField
-    body = RichTextUploadingField()         #允许上传文件的富文本编辑器
+    body = models.TextField()
 
     # 浏览量
     total_views = models.PositiveIntegerField(default=0)

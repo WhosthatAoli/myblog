@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/2.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
-
+import django_heroku
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -25,7 +25,7 @@ SECRET_KEY = '__=s9@oixaun$x^g7-4#10wf_*7zvb8)kl1$j82fj&cyq%^o^3'
 # SECURITY WARNING: don't run with debug turned on in production!
 
 # 部署到线上时为 False; 读者在本地调试时请修改为 True
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'whitenoise.runserver_nostatic',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -51,7 +52,6 @@ INSTALLED_APPS = [
     'password_reset',
     'taggit',
     'ckeditor',
-    'ckeditor_uploader',
     'mptt',
     'notifications',
 
@@ -69,6 +69,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'my_blog.urls'
@@ -103,7 +104,9 @@ DATABASES = {
     }
 }
 
-
+if os.getenv('DATABASE_URL') is not None:
+    import dj_database_url
+    DATABASES['default'] = dj_database_url.config()
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
@@ -146,7 +149,7 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
 # 静态文件收集目录
-STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # SMTP服务器
 EMAIL_HOST = 'your smtp'
@@ -164,34 +167,36 @@ DEFAULT_FROM_EMAIL = 'your email'
 # 媒体文件地址
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-CKEDITOR_UPLOAD_PATH = 'upload/'
 
-# ckeditor
 CKEDITOR_CONFIGS = {
-    # 配置名是default时，django-ckeditor默认使用这个配置
+    # django-ckeditor默认使用default配置
     'default': {
-        # 使用简体中文
-        'language': 'zh-cn',
-        # 编辑器的宽高请根据你的页面自行设置
-        'width': 'auto',
-        'height': '350px',
-        'image_previewText': ' ',
-        # 'tabSpaces': 4,
-         'toolbar': 'full',  # 完整工具条
-        #'toolbar': 'custom',  # 常用工具条
-        # 添加按钮在这里
-        # 'toolbar_Custom': [
-        #     ['Bold', 'Italic', 'Underline', 'Format', 'RemoveFormat'],
-        #     ['NumberedList', 'BulletedList'],
-        #     ['Blockquote', 'CodeSnippet'],
-        #     ['Image', 'Link', 'Unlink'],
-        #     ['Maximize']
-        # ],
+        # 编辑器宽度自适应
+        'width':'auto',
+        'height':'250px',
+        # tab键转换空格数
+        'tabSpaces': 4,
+        # 工具栏风格
+        'toolbar': 'Custom',
+        # 工具栏按钮
+        'toolbar_Custom': [
+            # 表情 代码块
+            ['Smiley', 'CodeSnippet'], 
+            # 字体风格
+            ['Bold', 'Italic', 'Underline', 'RemoveFormat', 'Blockquote'],
+            # 字体颜色
+            ['TextColor', 'BGColor'],
+            # 链接
+            ['Link', 'Unlink'],
+            # 列表
+            ['NumberedList', 'BulletedList'],
+            # 最大化
+            ['Maximize']
+        ],
         # 插件
-        'extraPlugins': ','.join(['codesnippet', 'uploadimage', 'widget', 'lineutils', 'prism' ]),
+        'extraPlugins': ','.join(['codesnippet', 'prism', 'widget', 'lineutils']),
     }
 }
-
 
 AUTHENTICATION_BACKENDS = (
     # 此项使 Django 后台可独立于 allauth 登录
@@ -274,3 +279,5 @@ LOGIN_REDIRECT_URL = '/'
 #         },
 #     }
 # }
+
+django_heroku.settings(locals())

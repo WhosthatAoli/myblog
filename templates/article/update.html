@@ -59,10 +59,7 @@
                 <div class="form-group">
                     <label for="body">文章正文</label>
                     <!-- 文本域不需要 value 属性，直接在标签体中嵌入数据即可 -->
-                    <div>
-                        {{ article_post_form.media }}
-                        {{ article_post_form.body }}
-                    <div>
+                    <textarea type="text" class="form-control" id="body" name="body" rows="12">{{ article.body }}</textarea>
                 </div>
 
                 <!-- 提交按钮 -->
@@ -72,8 +69,3 @@
     </div>
 </div>
 {% endblock content %}
-{% block script %}
-<script>
-    $(".django-ckeditor-widget").removeAttr('style');
-</script>
-{% endblock script %}
